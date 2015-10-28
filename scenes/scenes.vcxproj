@@ -122,7 +122,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxKinectForWindows2\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxKinectForWindows2\src;..\..\..\addons\ofxTween\src\Easings;..\..\..\addons\ofxTween\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -159,7 +159,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\..\..\addons\ofxKinectForWindows2\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\addons\ofxKinectForWindows2\src;..\..\..\addons\ofxTween\src\Easings;..\..\..\addons\ofxTween\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -174,13 +174,43 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\addons\ofxTween\src\Easings\ofxEasing.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingBack.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingBounce.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingCirc.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingCubic.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingElastic.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingExpo.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingLinear.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingQuad.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingQuart.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingQuint.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingSine.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxTween\src\ofxTween.cpp" />
     <ClCompile Include="src\HotSpot.cpp" />
+    <ClCompile Include="src\ImageElement.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
+    <ClCompile Include="src\Sequencable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\addons\ofxTween\src\Easings\ofxEasing.h" />
+    <ClInclude Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingBack.h" />
+    <ClInclude Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingBounce.h" />
+    <ClInclude Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingCirc.h" />
+    <ClInclude Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingCubic.h" />
+    <ClInclude Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingElastic.h" />
+    <ClInclude Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingExpo.h" />
+    <ClInclude Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingLinear.h" />
+    <ClInclude Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingQuad.h" />
+    <ClInclude Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingQuart.h" />
+    <ClInclude Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingQuint.h" />
+    <ClInclude Include="..\..\..\addons\ofxTween\src\Easings\ofxEasingSine.h" />
+    <ClInclude Include="..\..\..\addons\ofxTween\src\ofxTween.h" />
     <ClInclude Include="src\HotSpot.h" />
+    <ClInclude Include="src\ImageElement.h" />
     <ClInclude Include="src\ofApp.h" />
+    <ClInclude Include="src\Sequencable.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\addons\ofxCvGui\ofxCvGuiLib\ofxCvGuiLib.vcxproj">
@@ -198,6 +228,9 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\addons\ofxTween\src\Easings\easing_terms_of_use.html" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

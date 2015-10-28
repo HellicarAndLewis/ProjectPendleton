@@ -11,6 +11,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxCvGuiLib", "..\..\..\addons\ofxCvGui\ofxCvGuiLib\ofxCvGuiLib.vcxproj", "{6F0DDB4F-4014-4433-919B-9D956C034BAD}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64

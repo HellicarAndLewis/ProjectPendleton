@@ -4,6 +4,9 @@
 #include "ofxKinectForWindows2.h"
 #include "ofxAssets.h"
 #include "HotSpot.h"
+#include "ImageElement.h"
+
+#define SCENE_COUNT 4
 
 // TODO:
 // hit area into seperate file
@@ -21,6 +24,9 @@ class ofApp : public ofBaseApp{
 		void draw();
 		void drawKinectInputs();
 
+		void nextScene();
+		void prevScene();
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -36,9 +42,12 @@ class ofApp : public ofBaseApp{
 		bool doDrawKinectInputs;
 		HotSpot hitAreaSingleScene;
 		HotSpot hitAreaSceneNext;
+		HotSpot hitAreaScenePrevious;
+		vector<HotSpot*> hotSpots;
 		float colourToWindowScale;
 
-		ofImage bgImages[4];
+		ImageElement bgImages[SCENE_COUNT];
+		int sceneIndex = 0;
 
 
 };

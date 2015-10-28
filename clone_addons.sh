@@ -30,7 +30,7 @@ ${CLONE}elliotwoods/ofxTextInputField
 ${CLONE}elliotwoods/ofxAssets
 ${CLONE}elliotwoods/ofxSingleton
 ${CLONE}elliotwoods/ofxAddonLib
-
+${CLONE}arturoc/ofxTween
 
 # final step is to cd back to the start dir
 cd ../apps/ProjectPendleton

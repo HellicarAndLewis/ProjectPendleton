@@ -39,7 +39,8 @@ class ofApp : public ofBaseApp{
 
 		ofxKFW2::Device kinect;
 
-		bool doDrawKinectInputs;
+		bool doDrawKinectInputs = false;
+		bool doDrawSmallColour = false;
 		HotSpot hitAreaSingleScene;
 		HotSpot hitAreaSceneNext;
 		HotSpot hitAreaScenePrevious;

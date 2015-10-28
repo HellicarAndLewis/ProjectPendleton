@@ -117,6 +117,10 @@ void ofApp::draw(){
 		}
 	}
 
+	if (doDrawSmallColour) {
+		kinect.getColorSource()->draw(10, 10, ofGetWidth()*0.2, ofGetWidth()*0.2*0.526);
+	}
+	
 	ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 20, ofGetHeight() - 20, ofColor(0, 0, 200));
 }
 
@@ -159,6 +163,9 @@ void ofApp::keyPressed(int key){
 	switch (key) {
 	case 'f':
 		ofToggleFullscreen();
+		break;
+	case 'c':
+		doDrawSmallColour = !doDrawSmallColour;
 		break;
 	case OF_KEY_LEFT:
 		if (mode == MULTIPLE_SCENES) prevScene();

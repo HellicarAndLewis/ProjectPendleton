@@ -11,6 +11,12 @@ void ofApp::setup(){
 
 	mode = SINGLE_SCENE;
 	doDrawKinectInputs = false;
+
+	bgImages[0].loadImage("assets/images/Env Background Renders/Splash0.png");
+	bgImages[1].loadImage("assets/images/Env Background Renders/Env_CandyKingdom.png");
+	bgImages[2].loadImage("assets/images/Env Background Renders/Env_Dongeon.png");
+	bgImages[3].loadImage("assets/images/Env Background Renders/Env_Forest.png");
+	hitAreaSingleScene.setup("assets/images/Finn Punch/FinnCamPunch_1.png", "assets/images/Finn Punch/FinnCamPunch_2.png", 0.5);
 }
 
 //--------------------------------------------------------------
@@ -19,7 +25,7 @@ void ofApp::update(){
 	// update hit areas based on app dimenions
 	int w = ofGetWidth() * 0.25;
 	int h = ofGetHeight() * 0.25;
-	hitAreaSingleScene.bounds.set(ofGetWidth() - w, 0, w, h);
+	hitAreaSingleScene.bounds.setPosition(ofGetWidth() * 0.5, ofGetHeight() - hitAreaSingleScene.bounds.getHeight());
 
 	// scale factor for the kinect colour image to the oF window size
 	colourToWindowScale = ofGetWidth() / kinect.getColorSource()->getWidth();
@@ -50,6 +56,9 @@ void ofApp::draw(){
 	if (doDrawKinectInputs) drawKinectInputs();
 	if (mode == SINGLE_SCENE) {
 		ofBackground(255);
+		// BG image
+		float bgImageScale = ofGetHeight() / bgImages[0].getHeight();
+		bgImages[0].draw(0, 0, bgImages[0].getWidth() * bgImageScale, bgImages[0].getHeight() * bgImageScale);
 		// draw kinect body source
 		// this is the full skeleton
 		int w = kinect.getColorSource()->getWidth() * colourToWindowScale;
@@ -70,6 +79,7 @@ void ofApp::draw(){
 			}
 		}
 	}
+	ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 20, ofGetHeight() - 20, ofColor(0, 0, 200));
 }
 
 void ofApp::drawKinectInputs() {
@@ -91,7 +101,13 @@ void ofApp::drawKinectInputs() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	
+	switch (key) {
+	case 'f':
+		ofToggleFullscreen();
+		break;
+	default:
+		break;
+	}
 }
 
 //--------------------------------------------------------------

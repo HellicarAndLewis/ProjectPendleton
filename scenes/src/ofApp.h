@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 #include "ofxKinectForWindows2.h"
+#include "ofxAssets.h"
+#include "HotSpot.h"
 
 // TODO:
 // hit area into seperate file
@@ -13,18 +15,6 @@ class ofApp : public ofBaseApp{
 		enum Mode {
 			SINGLE_SCENE, MULTIPLE_SCENES
 		} mode;
-
-		struct HitArea {
-			ofRectangle bounds;
-			bool isHit;
-			void draw() {
-				ofPushStyle();
-				if (isHit) ofSetColor(0, 200, 0, 60);
-				else ofSetColor(200, 0, 0, 60);
-				ofDrawRectangle(bounds);
-				ofPopStyle();
-			}
-		};
 
 		void setup();
 		void update();
@@ -44,7 +34,11 @@ class ofApp : public ofBaseApp{
 		ofxKFW2::Device kinect;
 
 		bool doDrawKinectInputs;
-		HitArea hitAreaSingleScene;
-		HitArea hitAreaSceneNext;
+		HotSpot hitAreaSingleScene;
+		HotSpot hitAreaSceneNext;
 		float colourToWindowScale;
+
+		ofImage bgImages[4];
+
+
 };

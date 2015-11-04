@@ -32,6 +32,9 @@ ${CLONE}elliotwoods/ofxSingleton
 ${CLONE}elliotwoods/ofxAddonLib
 ${CLONE}arturoc/ofxTween
 ${CLONE}kylemcdonald/ofxCv
+cd ofxCv
+git checkout develop
+cd ..
 
 # final step is to cd back to the start dir
 cd ../apps/ProjectPendleton

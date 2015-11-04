@@ -4,6 +4,7 @@
 #include "ofxKinectForWindows2.h"
 #include "HotSpot.h"
 #include "ImageElement.h"
+#include "ofxCv.h"
 
 #define SCENE_COUNT 4
 

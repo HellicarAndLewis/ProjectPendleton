@@ -5,6 +5,7 @@
 #include "HotSpot.h"
 #include "ImageElement.h"
 #include "ofxCv.h"
+#include "ofxGui.h"
 
 #define SCENE_COUNT 4
 

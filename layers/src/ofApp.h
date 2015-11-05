@@ -2,27 +2,17 @@
 
 #include "ofMain.h"
 #include "ofxKinectForWindows2.h"
-#include "HotSpot.h"
 #include "ImageElement.h"
-#include "ofxCv.h"
-#include "ofxGui.h"
-
-#define SCENE_COUNT 4
+#include "ofxGui.h" 
+#include "Scene.h" 
 
 class ofApp : public ofBaseApp{
 
 	public:
-		enum Mode {
-			SINGLE_SCENE, MULTIPLE_SCENES
-		} mode;
-
 		void setup();
 		void update();
 		void draw();
 		void drawKinectInputs();
-
-		void nextScene();
-		void prevScene();
 
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -38,14 +28,9 @@ class ofApp : public ofBaseApp{
 
 		bool doDrawKinectInputs = false;
 		bool doDrawSmallColour = false;
-		HotSpot hitAreaSingleScene;
-		HotSpot hitAreaSceneNext;
-		HotSpot hitAreaScenePrevious;
-		vector<HotSpot*> hotSpots;
 		float colourToWindowScale;
 
-		ImageElement bgImages[SCENE_COUNT];
-		int sceneIndex = 0;
-
+		ImageElement bgImage;
+		Scene scene;
 
 };

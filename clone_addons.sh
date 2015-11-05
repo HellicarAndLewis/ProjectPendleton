@@ -35,6 +35,7 @@ ${CLONE}kylemcdonald/ofxCv
 cd ofxCv
 git checkout develop
 cd ..
+${CLONE}vanderlin/ofxBox2d
 
 # final step is to cd back to the start dir
 cd ../apps/ProjectPendleton

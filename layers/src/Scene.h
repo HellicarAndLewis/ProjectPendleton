@@ -10,6 +10,8 @@ public:
 	void update();
 	void draw(bool debug = false);
 	void birth(float scale = 1.0f);
+	void createLandscape();
+	void clearSnow();
 
 	void keyPressed(int key);
 	void keyReleased(int key);
@@ -19,10 +21,10 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void resized(int w, int h);
 
-
-	ofxBox2d box2d;			  //	the box2d world
-	vector <shared_ptr<ofxBox2dCircle>> circles;		  //	default box2d circles
-	vector <shared_ptr<ofxBox2dRect>> boxes;			  //	defalut box2d rects
+	ofxBox2d box2d;
+	vector <shared_ptr<ofxBox2dCircle>> circles;
+	vector <shared_ptr<ofxBox2dRect>> boxes;
+	vector <shared_ptr<ofxBox2dEdge>> edges;
 
 	ofImage snowImage;
 

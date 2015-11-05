@@ -7,6 +7,11 @@
 #include "Scene.h"
 #include "Mic.h"
 
+// TODO:
+// move kinect to Vision, implement ofxCv optical flow
+// on update, check for flow near wall sections = destroy wall sections
+// check for kinect hands contact with snow = melt snow? Or kick it?
+
 class ofApp : public ofBaseApp{
 
 	public:

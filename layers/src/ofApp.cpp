@@ -67,7 +67,7 @@ void ofApp::draw(){
 	// draw things
 	bgImage.draw();
 	scene.draw();
-	mic.draw();
+	//mic.draw();
 
 	// draw kinect body source
 	// this is the full skeleton
@@ -122,7 +122,7 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-
+	scene.mouseMoved(x, y);
 }
 
 //--------------------------------------------------------------

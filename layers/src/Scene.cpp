@@ -43,6 +43,13 @@ void Scene::draw() {
 	ofPopStyle();
 }
 
+void Scene::birth(float scale) {
+	float r = scale * 100;
+	circles.push_back(shared_ptr<ofxBox2dCircle>(new ofxBox2dCircle));
+	circles.back().get()->setPhysics(3.0, 0.53, 0.1);
+	circles.back().get()->setup(box2d.getWorld(), ofGetMouseX(), ofGetMouseY(), r);
+}
+
 
 void Scene::keyPressed(int key) {
 

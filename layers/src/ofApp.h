@@ -4,7 +4,8 @@
 #include "ofxKinectForWindows2.h"
 #include "ImageElement.h"
 #include "ofxGui.h" 
-#include "Scene.h" 
+#include "Scene.h"
+#include "Mic.h"
 
 class ofApp : public ofBaseApp{
 
@@ -32,5 +33,5 @@ class ofApp : public ofBaseApp{
 
 		ImageElement bgImage;
 		Scene scene;
-
+		Mic mic;
 };

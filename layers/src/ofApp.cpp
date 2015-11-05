@@ -29,6 +29,7 @@ void ofApp::setup(){
 	bgImage.show(ofPoint(), ofPoint(), 0);
 
 	scene.setup();
+	mic.setup();
 }
 
 //--------------------------------------------------------------
@@ -39,6 +40,11 @@ void ofApp::update(){
 	bgImage.update();
 	kinect.update();
 	scene.update();
+	mic.update();
+
+	if (mic.scaledVol > 0.1){
+		scene.birth(mic.scaledVol);
+	}
 
 	// limb tracking
 	auto & bodies = kinect.getBodySource()->getBodies();
@@ -61,6 +67,7 @@ void ofApp::draw(){
 	// draw things
 	bgImage.draw();
 	scene.draw();
+	mic.draw();
 
 	// draw kinect body source
 	// this is the full skeleton

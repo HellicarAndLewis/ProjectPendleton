@@ -9,6 +9,7 @@ public:
 	void setup();
 	void update();
 	void draw();
+	void birth(float scale = 1.0f);
 
 	void keyPressed(int key);
 	void keyReleased(int key);

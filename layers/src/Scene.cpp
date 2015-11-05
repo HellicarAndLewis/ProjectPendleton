@@ -7,6 +7,7 @@ void Scene::setup() {
 	box2d.createBounds();
 	box2d.setFPS(60.0);
 	box2d.registerGrabbing();
+	snowImage.load("assets/images/avalanche/snow.png");
 }
 
 
@@ -16,31 +17,38 @@ void Scene::update() {
 
 
 
-void Scene::draw() {
+void Scene::draw(bool debug) {
 	ofPushStyle();
 	for (int i = 0; i<circles.size(); i++) {
-		ofFill();
-		ofSetHexColor(0xf6c738);
-		circles[i].get()->draw();
+		if (debug) {
+			ofFill();
+			ofSetHexColor(0xf6c738);
+			circles[i].get()->draw();
+		}
+		int rad = circles[i].get()->getRadius() * 2;
+		auto pos = circles[i].get()->getPosition();
+		snowImage.draw(pos.x - rad, pos.y - rad, rad * 2, rad * 2);
 	}
 
-	for (int i = 0; i<boxes.size(); i++) {
-		ofFill();
-		ofSetHexColor(0xBF2545);
-		boxes[i].get()->draw();
+	if (debug) {
+		for (int i = 0; i < boxes.size(); i++) {
+			ofFill();
+			ofSetHexColor(0xBF2545);
+			boxes[i].get()->draw();
+		}
+
+		// draw the ground
+		box2d.drawGround();
+
+		string info = "";
+		info += "Press [c] for circles\n";
+		info += "Press [b] for blocks\n";
+		info += "Total Bodies: " + ofToString(box2d.getBodyCount()) + "\n";
+		info += "Total Joints: " + ofToString(box2d.getJointCount()) + "\n\n";
+		ofSetHexColor(0x444342);
+		ofDrawBitmapString(info, 30, 30);
+		ofPopStyle();
 	}
-
-	// draw the ground
-	box2d.drawGround();
-
-	string info = "";
-	info += "Press [c] for circles\n";
-	info += "Press [b] for blocks\n";
-	info += "Total Bodies: " + ofToString(box2d.getBodyCount()) + "\n";
-	info += "Total Joints: " + ofToString(box2d.getJointCount()) + "\n\n";
-	ofSetHexColor(0x444342);
-	ofDrawBitmapString(info, 30, 30);
-	ofPopStyle();
 }
 
 void Scene::birth(float scale) {

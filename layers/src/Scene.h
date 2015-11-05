@@ -8,7 +8,7 @@ public:
 
 	void setup();
 	void update();
-	void draw();
+	void draw(bool debug = false);
 	void birth(float scale = 1.0f);
 
 	void keyPressed(int key);
@@ -23,6 +23,8 @@ public:
 	ofxBox2d box2d;			  //	the box2d world
 	vector <shared_ptr<ofxBox2dCircle>> circles;		  //	default box2d circles
 	vector <shared_ptr<ofxBox2dRect>> boxes;			  //	defalut box2d rects
+
+	ofImage snowImage;
 
 };
 

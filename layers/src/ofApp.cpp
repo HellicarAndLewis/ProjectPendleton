@@ -16,29 +16,24 @@ void ofApp::setup(){
 		wglSwapIntervalEXT(1);
 #endif
 
-	kinect.open();
-	kinect.initDepthSource();
-	kinect.initColorSource();
-	kinect.initInfraredSource();
-	kinect.initBodySource();
-	kinect.initBodyIndexSource();
-	doDrawKinectInputs = false;
-
 	ofRectangle bgContainer = ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
 	bgImage.setup("assets/images/Env Background Renders/Splash0.png", bgContainer);
 	bgImage.show(ofPoint(), ofPoint(), 0);
 
+	vision.setup();
 	scene.setup();
 	mic.setup();
+	mode = MODE_MIC;
+
+	gui.setup("Settings");
+	gui.add(vision.paramGroup);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 
-	// scale factor for the kinect colour image to the oF window size
-	colourToWindowScale = ofGetWidth() / kinect.getColorSource()->getWidth();
+	vision.update(mode == MODE_FLOW, mode == MODE_SKELETON);
 	bgImage.update();
-	kinect.update();
 	scene.update();
 	mic.update();
 
@@ -46,57 +41,83 @@ void ofApp::update(){
 		scene.birth(mic.scaledVol);
 	}
 
-	// limb tracking
-	auto & bodies = kinect.getBodySource()->getBodies();
-	auto coordMapper = kinect.getBodySource()->getCoordinateMapper();
-	for (auto & body : bodies) {
-		if (body.tracked) {
-			auto handRightPos = body.joints.at(JointType_HandRight).getProjected(coordMapper);
-			auto handRightPosScaled = ofPoint(handRightPos.x * colourToWindowScale, handRightPos.y * colourToWindowScale);
-			// do something with hand
+	if (mode == MODE_SKELETON) {
+		float colourToWindowScale = ofGetWidth() / vision.kinect.getColorSource()->getWidth();
+		auto & bodies = vision.kinect.getBodySource()->getBodies();
+		auto coordMapper = vision.kinect.getBodySource()->getCoordinateMapper();
+		bool isHit = false;
+		ofRectangle snowBounds;
+		for (int i = 0; i<scene.circles.size(); i++) {
+			for (auto & body : bodies) {
+				if (body.tracked) {
+					auto handRightPos = body.joints.at(JointType_HandLeft).getProjected(coordMapper);
+					auto handRightPosScaled = ofPoint(handRightPos.x * colourToWindowScale, handRightPos.y * colourToWindowScale);
+					snowBounds.setFromCenter(
+						scene.circles[i].get()->getPosition(),
+						scene.circles[i].get()->getRadius() * 4,
+						scene.circles[i].get()->getRadius() * 4);
+					if (snowBounds.inside(handRightPosScaled)) {
+						scene.circles[i].get()->destroy();
+						//scene.circles[i].reset();
+					}
+				}
+			}
+			
 		}
 	}
-
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 	ofBackground(255);
-	if (doDrawKinectInputs) drawKinectInputs();
 
 	// draw things
 	bgImage.draw();
 	scene.draw();
-	//mic.draw();
+	if (mode == MODE_MIC) mic.draw();
+	vision.draw(mode == MODE_FLOW, mode == MODE_SKELETON);
 
-	// draw kinect body source
-	// this is the full skeleton
-	int w = kinect.getColorSource()->getWidth() * colourToWindowScale;
-	int h = kinect.getColorSource()->getHeight() * colourToWindowScale;
-	kinect.getBodySource()->drawProjected(0, 0, w, h);
-
-	if (doDrawSmallColour) {
-		kinect.getColorSource()->draw(10, 10, ofGetWidth()*0.2, ofGetWidth()*0.2*0.526);
+	if (mode == MODE_FLOW) {
+		// Flooooooow
+		ofxCv::FlowFarneback* flow = &vision.fb;
+		if (flow->getHeight() > 0) {
+			ofPushStyle();
+			ofFill();
+			int stepSize = 4;
+			int ySteps = flow->getHeight() / stepSize;
+			int xSteps = flow->getWidth() / stepSize;
+			float scale = ofGetHeight() / flow->getHeight();
+			if (vision.isFrameNew) {
+				int i = 0;
+				float threshold = 0.1;
+				for (int y = 1; y + 1 < ySteps; y++) {
+					for (int x = 1; x + 1 < xSteps; x++) {
+						int i = y * xSteps + x;
+						ofVec2f position(x * stepSize, y * stepSize);
+						ofRectangle area(position - ofVec2f(stepSize, stepSize) / 2, stepSize, stepSize);
+						ofVec2f offset = flow->getAverageFlowInRegion(area);
+						if (offset.lengthSquared() > threshold) {
+							area.scale(scale, scale);
+							area.x *= scale;
+							area.y *= scale;
+							for (auto wallChunk : scene.edges) {
+								ofRectangle wallRect = wallChunk->getBoundingBox();
+								if (wallRect.width < ofGetWidth() * 0.3 && area.intersects(wallRect)) {
+									wallChunk->destroy();
+								}
+							}
+						}
+						i++;
+					}
+				}
+			}
+			ofPopStyle();
+		}
 	}
-	
+
+	// GUI
+	gui.draw();
 	ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 20, ofGetHeight() - 20, ofColor(0, 0, 200));
-}
-
-void ofApp::drawKinectInputs() {
-	int previewWidth = ofGetWidth() / 2;
-	int previewHeight = previewWidth * 0.526;
-
-	kinect.getDepthSource()->draw(0, 0, previewWidth, previewHeight);  // note that the depth texture is RAW so may appear dark
-
-	float colorHeight = previewWidth * (kinect.getColorSource()->getHeight() / kinect.getColorSource()->getWidth());
-	float colorTop = (previewHeight - colorHeight) / 2.0;
-	kinect.getColorSource()->draw(previewWidth, 0 + colorTop, previewWidth, colorHeight);
-	kinect.getBodySource()->drawProjected(previewWidth, 0 + colorTop, previewWidth, colorHeight);
-
-	kinect.getInfraredSource()->draw(0, previewHeight, previewWidth, previewHeight);
-
-	kinect.getBodyIndexSource()->draw(previewWidth, previewHeight, previewWidth, previewHeight);
-	kinect.getBodySource()->drawProjected(previewWidth, previewHeight, previewWidth, previewHeight, ofxKFW2::ProjectionCoordinates::DepthCamera);
 }
 
 
@@ -106,12 +127,10 @@ void ofApp::keyPressed(int key){
 	case 'f':
 		ofToggleFullscreen();
 		break;
-	case 'd':
-		doDrawSmallColour = !doDrawSmallColour;
-		break;
 	default:
 		break;
 	}
+	vision.keyPressed(key);
 	scene.keyPressed(key);
 }
 
@@ -136,7 +155,9 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+	if (mode == MODE_MIC) mode = MODE_FLOW;
+	else if (mode == MODE_FLOW) mode = MODE_SKELETON;
+	else if (mode == MODE_SKELETON) mode = MODE_MIC;
 }
 
 //--------------------------------------------------------------

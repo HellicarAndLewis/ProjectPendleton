@@ -58,7 +58,7 @@ void Scene::draw(bool debug) {
 }
 
 void Scene::birth(float scale) {
-	float r = ofMap(scale, 0, 1, 6, 40);
+	float r = ofMap(scale, 0, 1, 6, 30);
 	circles.push_back(shared_ptr<ofxBox2dCircle>(new ofxBox2dCircle));
 	circles.back().get()->setPhysics(3.0, 0.53, 0.1);
 	float x = ofRandom(ofGetWidth() * 0.8, ofGetWidth() * 0.95);
@@ -99,7 +99,6 @@ void Scene::clearSnow() {
 
 
 void Scene::keyPressed(int key) {
-
 	if (key == 'c') {
 		float r = ofRandom(4, 20);
 		circles.push_back(shared_ptr<ofxBox2dCircle>(new ofxBox2dCircle));
@@ -107,11 +106,9 @@ void Scene::keyPressed(int key) {
 		circles.back().get()->setup(box2d.getWorld(), ofGetMouseX(), ofGetMouseY(), r);
 
 	}
-
 	if (key == 'r') {
 		clearSnow();
 	}
-
 }
 
 void Scene::keyReleased(int key) {}

@@ -2,11 +2,6 @@
 
 
 void Mic::setup() {
-
-	ofSetVerticalSync(true);
-	ofSetCircleResolution(80);
-	ofBackground(54, 54, 54);
-
 	// 0 output channels, 
 	// 2 input channels
 	// 44100 samples per second
@@ -15,11 +10,17 @@ void Mic::setup() {
 
 	soundStream.printDeviceList();
 
-	//if you want to set a different device id 
-	//soundStream.setDeviceID(0); //bear in mind the device id corresponds to all audio devices, including  input-only and output-only devices.
+	auto soundDevices = soundStream.getDeviceList();
+	int id = 0;
+	for (auto & device : soundDevices) {
+		if (ofIsStringInString(device.name, "Internal")) {
+			id = device.deviceID;
+		}
+	}
+	soundStream.setDeviceID(id);
+
 
 	int bufferSize = 256;
-
 
 	left.assign(bufferSize, 0.0);
 	right.assign(bufferSize, 0.0);
@@ -31,7 +32,6 @@ void Mic::setup() {
 	scaledVol = 0.0;
 
 	soundStream.setup(this, 0, 2, 44100, bufferSize, 4);
-	soundStream.start();
 }
 
 

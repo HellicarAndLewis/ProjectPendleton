@@ -1,24 +1,27 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxKinectForWindows2.h"
 #include "ImageElement.h"
 #include "ofxGui.h" 
 #include "Scene.h"
 #include "Mic.h"
+#include "Vision.h"
 
 // TODO:
-// move kinect to Vision, implement ofxCv optical flow
-// on update, check for flow near wall sections = destroy wall sections
-// check for kinect hands contact with snow = melt snow? Or kick it?
+// optimise particle drawing with billboard shader
+// make the snow melt more dramatic
 
 class ofApp : public ofBaseApp{
 
 	public:
+
+		enum Mode {
+			MODE_MIC, MODE_FLOW, MODE_SKELETON
+		} mode;
+
 		void setup();
 		void update();
 		void draw();
-		void drawKinectInputs();
 
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -30,13 +33,9 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		ofxKFW2::Device kinect;
-
-		bool doDrawKinectInputs = false;
-		bool doDrawSmallColour = false;
-		float colourToWindowScale;
-
+		ofxPanel gui;
 		ImageElement bgImage;
+		Vision vision;
 		Scene scene;
 		Mic mic;
 };

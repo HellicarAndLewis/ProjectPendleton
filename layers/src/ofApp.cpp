@@ -58,7 +58,6 @@ void ofApp::update(){
 						scene.circles[i].get()->getRadius() * 4);
 					if (snowBounds.inside(handRightPosScaled)) {
 						scene.circles[i].get()->destroy();
-						//scene.circles[i].reset();
 					}
 				}
 			}
@@ -117,7 +116,9 @@ void ofApp::draw(){
 
 	// GUI
 	gui.draw();
-	ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 20, ofGetHeight() - 20, ofColor(0, 0, 200));
+	string s = ofToString(scene.circles.size()) + " snow balls";
+	s += "fps: " + ofToString(ofGetFrameRate());
+	ofDrawBitmapStringHighlight(s, 20, ofGetHeight() - 20, ofColor(0, 0, 200));
 }
 
 

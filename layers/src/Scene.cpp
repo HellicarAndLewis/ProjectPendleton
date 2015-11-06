@@ -15,51 +15,32 @@ void Scene::setup() {
 
 void Scene::update() {
 	box2d.update();
+	for (int i = 0; i<circles.size(); i++) {
+		circles[i].get()->update();
+	}
 }
 
 
 
 void Scene::draw(bool debug) {
 	ofPushStyle();
+	ofFill();
+	if (!debug) snowImage.getTextureReference().bind();
 	for (int i = 0; i<circles.size(); i++) {
-		if (debug) {
-			ofFill();
-			ofSetHexColor(0xf6c738);
-			circles[i].get()->draw();
-		}
-		int rad = circles[i].get()->getRadius() * 2;
-		auto pos = circles[i].get()->getPosition();
-		snowImage.draw(pos.x - rad, pos.y - rad, rad * 2, rad * 2);
+		circles[i].get()->draw(debug);
 	}
+	if (!debug) snowImage.getTextureReference().unbind();
 
 	for (int i = 0; i<edges.size(); i++) {
 		edges[i].get()->draw();
 	}
 
-	if (debug) {
-		for (int i = 0; i < boxes.size(); i++) {
-			ofFill();
-			ofSetHexColor(0xBF2545);
-			boxes[i].get()->draw();
-		}
-
-		// draw the ground
-		box2d.drawGround();
-
-		string info = "";
-		info += "Press [c] for circles\n";
-		info += "Press [b] for blocks\n";
-		info += "Total Bodies: " + ofToString(box2d.getBodyCount()) + "\n";
-		info += "Total Joints: " + ofToString(box2d.getJointCount()) + "\n\n";
-		ofSetHexColor(0x444342);
-		ofDrawBitmapString(info, 30, 30);
-	}
 	ofPopStyle();
 }
 
 void Scene::birth(float scale) {
 	float r = ofMap(scale, 0, 1, 6, 30);
-	circles.push_back(shared_ptr<ofxBox2dCircle>(new ofxBox2dCircle));
+	circles.push_back(shared_ptr<SnowBall>(new SnowBall));
 	circles.back().get()->setPhysics(3.0, 0.53, 0.1);
 	float x = ofRandom(ofGetWidth() * 0.8, ofGetWidth() * 0.95);
 	circles.back().get()->setup(box2d.getWorld(), x, 0, r);
@@ -101,7 +82,7 @@ void Scene::clearSnow() {
 void Scene::keyPressed(int key) {
 	if (key == 'c') {
 		float r = ofRandom(4, 20);
-		circles.push_back(shared_ptr<ofxBox2dCircle>(new ofxBox2dCircle));
+		circles.push_back(shared_ptr<SnowBall>(new SnowBall));
 		circles.back().get()->setPhysics(3.0, 0.53, 0.1);
 		circles.back().get()->setup(box2d.getWorld(), ofGetMouseX(), ofGetMouseY(), r);
 

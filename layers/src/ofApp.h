@@ -34,6 +34,9 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 
 		ofxPanel gui;
+		ofParameterGroup paramGroup;
+		ofParameter<int> stepSize;
+
 		ImageElement bgImage;
 		Vision vision;
 		Scene scene;

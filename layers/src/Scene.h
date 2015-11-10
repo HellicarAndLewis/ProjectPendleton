@@ -8,7 +8,7 @@ public:
 	void update() {
 		if (isMelting) {
 			color.lerp(colorMelted, 0.1);
-			if (color.r > 250) this->destroy();
+			if (color.g < 124) this->destroy();
 		}
 	}
 	void melt() {
@@ -49,10 +49,10 @@ public:
 		glVertex3f(point.x, point.y, 0);
 	}
 
-	bool isMelting;
+	bool isMelting = false;
 	float meltAmount = 0.0f;
 	ofColor color = ofColor(255);
-	ofColor colorMelted = ofColor(255,0,0);
+	ofColor colorMelted = ofColor(255, 122, 134);
 };
 
 class Scene {

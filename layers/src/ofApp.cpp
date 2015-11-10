@@ -4,8 +4,9 @@
 void ofApp::setup(){
 
 	ofSetCircleResolution(100);
-
+	ofSetLogLevel(OF_LOG_WARNING);
 	ofSetVerticalSync(true);
+
 #ifdef _WIN32
 	// Turn on vertical screen sync under Windows.
 	// (I.e. it uses the WGL_EXT_swap_control extension)
@@ -26,6 +27,9 @@ void ofApp::setup(){
 	mode = MODE_MIC;
 
 	gui.setup("Settings");
+	paramGroup.setName("App");
+	paramGroup.add(stepSize.set("flow step", 6, 1, 10));
+	gui.add(paramGroup);
 	gui.add(vision.paramGroup);
 }
 
@@ -50,14 +54,14 @@ void ofApp::update(){
 		for (int i = 0; i<scene.circles.size(); i++) {
 			for (auto & body : bodies) {
 				if (body.tracked) {
-					auto handRightPos = body.joints.at(JointType_HandLeft).getProjected(coordMapper);
+					auto handRightPos = body.joints.at(JointType_FootLeft).getProjected(coordMapper);
 					auto handRightPosScaled = ofPoint(handRightPos.x * colourToWindowScale, handRightPos.y * colourToWindowScale);
 					snowBounds.setFromCenter(
 						scene.circles[i].get()->getPosition(),
 						scene.circles[i].get()->getRadius() * 4,
 						scene.circles[i].get()->getRadius() * 4);
 					if (snowBounds.inside(handRightPosScaled)) {
-						scene.circles[i].get()->destroy();
+						scene.circles[i].get()->melt();
 					}
 				}
 			}
@@ -79,35 +83,32 @@ void ofApp::draw(){
 	if (mode == MODE_FLOW) {
 		// Flooooooow
 		ofxCv::FlowFarneback* flow = &vision.fb;
-		if (flow->getHeight() > 0) {
+		if (vision.isFrameNew && flow->getHeight() > 0) {
 			ofPushStyle();
 			ofFill();
-			int stepSize = 4;
 			int ySteps = flow->getHeight() / stepSize;
 			int xSteps = flow->getWidth() / stepSize;
 			float scale = ofGetHeight() / flow->getHeight();
-			if (vision.isFrameNew) {
-				int i = 0;
-				float threshold = 0.1;
-				for (int y = 1; y + 1 < ySteps; y++) {
-					for (int x = 1; x + 1 < xSteps; x++) {
-						int i = y * xSteps + x;
-						ofVec2f position(x * stepSize, y * stepSize);
-						ofRectangle area(position - ofVec2f(stepSize, stepSize) / 2, stepSize, stepSize);
-						ofVec2f offset = flow->getAverageFlowInRegion(area);
-						if (offset.lengthSquared() > threshold) {
-							area.scale(scale, scale);
-							area.x *= scale;
-							area.y *= scale;
-							for (auto wallChunk : scene.edges) {
-								ofRectangle wallRect = wallChunk->getBoundingBox();
-								if (wallRect.width < ofGetWidth() * 0.3 && area.intersects(wallRect)) {
-									wallChunk->destroy();
-								}
+			int i = 0;
+			float threshold = 0.1;
+			for (int y = 1; y + 1 < ySteps; y++) {
+				for (int x = 1; x + 1 < xSteps; x++) {
+					int i = y * xSteps + x;
+					ofVec2f position(x * stepSize, y * stepSize);
+					ofRectangle area(position - ofVec2f(stepSize, stepSize) / 2, stepSize, stepSize);
+					ofVec2f offset = flow->getAverageFlowInRegion(area);
+					if (offset.lengthSquared() > threshold) {
+						area.scale(scale, scale);
+						area.x *= scale;
+						area.y *= scale;
+						for (auto wallChunk : scene.edges) {
+							ofRectangle wallRect = wallChunk->getBoundingBox();
+							if (wallRect.width < ofGetWidth() * 0.3 && area.intersects(wallRect)) {
+								wallChunk->destroy();
 							}
 						}
-						i++;
 					}
+					i++;
 				}
 			}
 			ofPopStyle();

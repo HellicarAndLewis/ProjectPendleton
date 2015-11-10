@@ -6,74 +6,45 @@ void Vision::setup() {
 	kinect.open();
 	kinect.initDepthSource();
 	kinect.initColorSource();
-	//kinect.initInfraredSource();
 	kinect.initBodySource();
-	//kinect.initBodyIndexSource();
 
 	// GUI params
 	paramGroup.setName("Vision");
-	//paramGroup.add(lkMaxLevel.set("lkMaxLevel", 3, 0, 8));
-	//paramGroup.add(lkMaxFeatures.set("lkMaxFeatures", 200, 1, 1000));
-	//paramGroup.add(lkQualityLevel.set("lkQualityLevel", 0.01, 0.001, .02));
-	//paramGroup.add(lkMinDistance.set("lkMinDistance", 4, 1, 16));
-	//paramGroup.add(lkWinSize.set("lkWinSize", 8, 4, 64));
-	//paramGroup.add(usefb.set("Use Farneback", true));
 	paramGroup.add(fbPyrScale.set("fbPyrScale", 0, 0, .99));
 	paramGroup.add(fbLevels.set("fbLevels", 1, 1, 8));
 	paramGroup.add(fbIterations.set("fbIterations", 1, 1, 8));
 	paramGroup.add(fbPolyN.set("fbPolyN", 7, 5, 10));
 	paramGroup.add(fbPolySigma.set("fbPolySigma", 1.5, 1.1, 2));
 	paramGroup.add(fbUseGaussian.set("fbUseGaussian", false));
-	paramGroup.add(fbWinSize.set("winSize", 32, 4, 64));
+	paramGroup.add(fbWinSize.set("winSize", 8, 4, 64));
 
-	// CV
-	//curFlow = &fb;
 }
 
 
 void Vision::update(bool doFlow, bool doSkeleton) {
 
+	if (!doFlow && !doSkeleton) return;
+
 	kinect.update();
 
 	// scale factor for the kinect colour image to the oF window size
 	colourToWindowScale = ofGetWidth() / kinect.getColorSource()->getWidth();
+	isFrameNew = kinect.getDepthSource()->isFrameNew();
 
-	// limb tracking
-	auto & bodies = kinect.getBodySource()->getBodies();
-	auto coordMapper = kinect.getBodySource()->getCoordinateMapper();
-	for (auto & body : bodies) {
-		if (body.tracked) {
-			auto handRightPos = body.joints.at(JointType_HandRight).getProjected(coordMapper);
-			auto handRightPosScaled = ofPoint(handRightPos.x * colourToWindowScale, handRightPos.y * colourToWindowScale);
-			// do something with hand
-		}
-	}
-
-	if (isFrameNew = kinect.getDepthSource()->isFrameNew()) {
-		if (kinect.getColorSource()->getPixels().getWidth() > 0) {
-			if (true) {
-				//curFlow = &fb;
-				fb.setPyramidScale(fbPyrScale);
-				fb.setNumLevels(fbLevels);
-				fb.setWindowSize(fbWinSize);
-				fb.setNumIterations(fbIterations);
-				fb.setPolyN(fbPolyN);
-				fb.setPolySigma(fbPolySigma);
-				fb.setUseGaussian(fbUseGaussian);
-			}
-			else {
-				//curFlow = &lk;
-				//lk.setMaxFeatures(lkMaxFeatures);
-				//lk.setQualityLevel(lkQualityLevel);
-				//lk.setMinDistance(lkMinDistance);
-				//lk.setWindowSize(lkWinSize);
-				//lk.setMaxLevel(lkMaxLevel);
-			}
-
-			Mat mat = toCv(kinect.getColorSource()->getPixels());
-			resize(mat, flowMat, 0.1, 0.1);
+	if (isFrameNew && doFlow) {
+		ofPixels& colourPixels = kinect.getColorSource()->getPixels();
+		if (colourPixels.getWidth() > 0) {
+			// update flow settings
+			fb.setPyramidScale(fbPyrScale);
+			fb.setNumLevels(fbLevels);
+			fb.setWindowSize(fbWinSize);
+			fb.setNumIterations(fbIterations);
+			fb.setPolyN(fbPolyN);
+			fb.setPolySigma(fbPolySigma);
+			fb.setUseGaussian(fbUseGaussian);
+			// do FB based flow
+			resize(colourPixels, flowMat, 0.07, 0.07);
 			fb.calcOpticalFlow(flowMat);
-
 		}
 	}
 }

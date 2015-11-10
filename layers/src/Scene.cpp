@@ -4,11 +4,9 @@
 void Scene::setup() {
 	box2d.init();
 	box2d.setGravity(0, 10);
-	//box2d.createBounds();
 	box2d.setFPS(60.0);
 	box2d.registerGrabbing();
 	snowImage.load("assets/images/avalanche/snow.png");
-
 	createLandscape();
 }
 
@@ -17,6 +15,12 @@ void Scene::update() {
 	box2d.update();
 	for (int i = 0; i<circles.size(); i++) {
 		circles[i].get()->update();
+		if (circles[i].get()->getWorld() == NULL) {
+			ofLogNotice() << "in Scene::update snow has no world, remove it";
+			circles[i].get()->destroy();
+			circles[i].reset();
+			circles.erase(circles.begin() + i);
+		}
 	}
 }
 
@@ -24,16 +28,23 @@ void Scene::update() {
 
 void Scene::draw(bool debug) {
 	ofPushStyle();
+
+	ofSetHexColor(0x30C8E8);
+	ofSetLineWidth(8);
+	for (int i = 0; i<edges.size(); i++) {
+		edges[i].get()->draw();
+	}
+
+	ofSetHexColor(0x42ACFF);
 	ofFill();
+	ofDrawTriangle(ofPoint(ofGetWidth(), ofGetHeight()), ofPoint(0, ofGetHeight()), ofPoint(ofGetWidth(), ofGetHeight() * 0.6));
+
+	ofSetHexColor(0xffffff);
 	if (!debug) snowImage.getTextureReference().bind();
 	for (int i = 0; i<circles.size(); i++) {
 		circles[i].get()->draw(debug);
 	}
 	if (!debug) snowImage.getTextureReference().unbind();
-
-	for (int i = 0; i<edges.size(); i++) {
-		edges[i].get()->draw();
-	}
 
 	ofPopStyle();
 }
@@ -104,6 +115,16 @@ void Scene::mouseMoved(int x, int y) {
 				edges[i].reset();
 				edges.erase(edges.begin() + i);
 			}
+		}
+	}
+	ofRectangle snowBounds;
+	for (int i = 0; i<circles.size(); i++) {
+		snowBounds.setFromCenter(
+			circles[i].get()->getPosition(),
+			circles[i].get()->getRadius() * 4,
+			circles[i].get()->getRadius() * 4);
+		if (snowBounds.inside(ofPoint(x, y))) {
+			circles[i].get()->melt();
 		}
 	}
 }
